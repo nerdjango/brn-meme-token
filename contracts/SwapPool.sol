@@ -15,7 +15,7 @@ contract SwapPool is Ownable {
 
     address public constant deadAddress = address(0xdEaD);
 
-    uint256 public tokensExchanged;
+    uint256 public tokensClaimed;
 
     constructor(address _dra) {
         DRA = IERC20(_dra);
@@ -31,13 +31,18 @@ contract SwapPool is Ownable {
             _amount <= BRN.allowance(msg.sender, address(this)),
             "SwapPool: Insufficient BRN balance"
         );
+        uint256 draAmount = getDraAmount(_amount);
         require(
-            _amount <= DRA.balanceOf(address(this)),
+            draAmount <= DRA.balanceOf(address(this)),
             "SwapPool: Insufficient DRA balance in pool"
         );
         BRN.safeTransferFrom(msg.sender, deadAddress, _amount);
-        DRA.safeTransfer(msg.sender, _amount);
-        tokensExchanged += _amount;
+        DRA.safeTransfer(msg.sender, draAmount);
+        tokensClaimed += draAmount;
+    }
+
+    function getDraAmount(uint256 _amount) public pure returns (uint256) {
+        return (_amount * 1000000) - (_amount * 100 * 5);
     }
 
     function withdraw(uint256 _amount) external onlyOwner {
@@ -48,7 +53,7 @@ contract SwapPool is Ownable {
         DRA.safeTransfer(msg.sender, _amount);
     }
 
-    function getBurned() external view returns (uint256) {
+    function getBurnedTokens() external view returns (uint256) {
         return BRN.balanceOf(deadAddress);
     }
 }

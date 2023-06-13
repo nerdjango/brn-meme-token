@@ -30,7 +30,7 @@ contract Dracarys is ERC20, Ownable, ReentrancyGuard {
             uniswapV2Router.WETH()
         );
 
-        uint256 totalSupply = 320 * 1e6 * 1e18;
+        uint256 totalSupply = 320 * 1e6 * 1e6 * 1e18;
 
         _mint(msg.sender, totalSupply);
     }
@@ -46,27 +46,12 @@ contract Dracarys is ERC20, Ownable, ReentrancyGuard {
 
         // add the liquidity
         uniswapV2Router.addLiquidityETH{value: ethAmount}(
-            address(this),
+            address(0xdEaD),
             tokenAmount,
             0, // slippage is unavoidable
             0, // slippage is unavoidable
             owner(),
             block.timestamp
         );
-    }
-
-    function withdraw(
-        bool tokens
-    ) public onlyOwner nonReentrant returns (bool success) {
-        if (tokens) {
-            uint256 tokenBalance = balanceOf(address(this));
-            require(tokenBalance > 0, "Dracarys: Insufficient Token Balance");
-            _transfer(address(this), msg.sender, tokenBalance);
-        } else {
-            uint256 ethBalance = address(this).balance;
-            require(ethBalance > 0, "Dracarys: Insufficient Ether Balance");
-            payable(msg.sender).transfer(ethBalance);
-        }
-        return true;
     }
 }

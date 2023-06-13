@@ -1,24 +1,26 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+    const [deployer] = await ethers.getSigners();
 
-  const lockedAmount = ethers.utils.parseEther("0.001");
+    console.log("Operation started");
+    console.log("Deploying contracts with the account:", deployer.address);
+    console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+    const Dracarys = await ethers.getContractFactory("Dracarys");
+    const dracarys = await Dracarys.deploy();
+    await dracarys.deployed();
+    console.log(`Dracarys token deployed to ${dracarys.address}`);
 
-  await lock.deployed();
-
-  console.log(
-    `Lock with ${ethers.utils.formatEther(lockedAmount)}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+    const SwapPool = await ethers.getContractFactory("SwapPool");
+    const swapPool = await SwapPool.deploy(dracarys.address);
+    await swapPool.deployed();
+    console.log(`Swap pool deployed to ${swapPool.address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+    console.error(error);
+    process.exitCode = 1;
 });
