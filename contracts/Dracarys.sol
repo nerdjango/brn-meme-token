@@ -8,9 +8,8 @@ import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../node_modules/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "../node_modules/@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import "../node_modules/@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
-import "../node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Dracarys is ERC20, Ownable, ReentrancyGuard {
+contract Dracarys is ERC20, Ownable {
     using SafeMath for uint256;
 
     IUniswapV2Router02 public immutable uniswapV2Router;
